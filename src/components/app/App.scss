@@ -1,0 +1,28 @@
+$background-color-base: white;
+$background: #E5E5E5;
+$heading-color: rgba(0, 0, 0, 0.85);
+$shadow-color: rgba(0, 0, 0, 0.15);
+
+.app {
+    background-color: $background;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    padding-bottom: 78px;
+}
+
+a {
+    text-decoration: none;
+        color: $heading-color;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 80%;
+
+}

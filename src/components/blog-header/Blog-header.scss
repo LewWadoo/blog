@@ -1,0 +1,35 @@
+$background-color-base: white;
+$success-color: #52C41A;
+$heading-color: rgba(0, 0, 0, 0.85);
+
+.blog-header {
+    margin-bottom: 26px;
+    background-color: $background-color-base;
+    padding: 0 22px;
+    height: 80px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    align-self: stretch;
+}
+
+.link {
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 28px;
+    margin-right: 1em;
+}
+
+.link-root {
+    margin-right: auto;
+}
+
+.link-register {
+    border: 1px solid $success-color;
+    padding: 0.3em 1em;
+    border-radius: 5px;
+    color: $success-color;
+}

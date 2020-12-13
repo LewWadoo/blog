@@ -1,0 +1,47 @@
+$background-color-base: white;
+$success-color: #52C41A;
+$heading-color: rgba(0, 0, 0, 0.85);
+$text-color: rgba(0, 0, 0, 0.75);
+$info-color: rgba(24, 144, 255, 1);
+$font-size-sm: 12px;
+$font-size-heading: 18px;
+$text-color-secondary: rgba(0, 0, 0, 0.5);
+
+.user {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.name {
+   font-family: 'Inter';
+    font-size: $font-size-heading;
+    line-height: 28px;
+    font-weight: 400;
+    color: $heading-color;
+    
+}
+
+.date {
+    font-family: 'Inter';
+    font-size: $font-size-sm;
+    line-height: 22px;
+    font-weight: 400;
+    color: $text-color-secondary;
+   
+}
+
+.picture {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    margin-left: 12px;
+}
