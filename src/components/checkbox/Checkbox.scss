@@ -1,0 +1,39 @@
+$distance-checkbox-text: 32px;
+$hover-color: #F1FCFF;
+$grey-8: #595959;
+
+.checkbox {
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: $grey-8;
+    padding: 10px 20px 0px $distance-checkbox-text;
+
+    &:hover, &:focus {
+	cursor: pointer;
+    }
+}
+
+.checkbox-input {
+    position: absolute;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.checkbox-custom {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-image: url('./checkbox-enabled-unchecked.svg');
+    background-size: contain;
+    margin-left: -30px;
+}
+
+.checkbox-input:checked + .checkbox-custom {
+    background-image: url('./checkbox-enabled-checked.svg');
+}

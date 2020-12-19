@@ -1,6 +1,7 @@
 $background-color-base: white;
 $success-color: #52C41A;
 $heading-color: rgba(0, 0, 0, 0.85);
+$text-color: rgba(0, 0, 0, 0.75);
 
 .blog-header {
     margin-bottom: 26px;
@@ -28,6 +29,29 @@ $heading-color: rgba(0, 0, 0, 0.85);
 }
 
 .link-register {
+    border: 1px solid $success-color;
+    padding: 0.3em 1em;
+    border-radius: 5px;
+    color: $success-color;
+}
+
+.link-logout {
+    background-color: $background-color-base;
+    border: 1px solid $text-color;
+    padding: 0.3em 1em;
+    border-radius: 5px;
+    color: $text-color;
+    cursor: pointer;
+}
+
+.user {
+    display: flex;
+    flex-direction: row;
+}
+
+.link-new-article {
+font-size: 14px;
+line-height: 22px;    
     border: 1px solid $success-color;
     padding: 0.3em 1em;
     border-radius: 5px;

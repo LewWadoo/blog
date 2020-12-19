@@ -1,0 +1,27 @@
+$background-color-base: white;
+$success-color: #52C41A;
+$heading-color: rgba(0, 0, 0, 0.85);
+$text-color: rgba(0, 0, 0, 0.75);
+$info-color: rgba(24, 144, 255, 1);
+$text-color-secondary: rgba(0, 0, 0, 0.5);
+$font-size-sm: 12px;
+$grey-6: #BFBFBF;
+$highlight-color: #F5222D;
+
+.form-field-error {
+/* Regular / 14px | 22px */
+
+font-family: Roboto;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 22px;
+/* identical to box height, or 157% */
+
+
+/* @highlight-color */
+
+color: $highlight-color;
+
+margin: 0;
+}

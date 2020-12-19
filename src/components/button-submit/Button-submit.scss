@@ -1,0 +1,32 @@
+$background-color-base: white;
+$success-color: #52C41A;
+$heading-color: rgba(0, 0, 0, 0.85);
+$text-color: rgba(0, 0, 0, 0.75);
+$info-color: rgba(24, 144, 255, 1);
+$text-color-secondary: rgba(0, 0, 0, 0.5);
+$font-size-sm: 12px;
+$grey-6: #BFBFBF;
+$day-break-blue: #1890FF;
+
+.btn-submit {
+    background-color: $day-break-blue;
+    border-radius: 4px;
+    border: none;
+    padding: 8px 16px;
+
+    /* Regular / 16 px | 24 px */
+
+font-family: Roboto;
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+/* identical to box height, or 150% */
+
+/* Grey / grey-1 */
+
+color: $background-color-base;
+margin-bottom: 8px;
+    margin-top: 21px;
+cursor: pointer;
+}

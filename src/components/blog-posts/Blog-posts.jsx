@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 import './Blog-posts.scss';
 import BlogPostHeader from '../blog-post-header';
-import BlogService from '../../services/blogService';
+import BlogService from '../../services/blog-service';
 
 function BlogPosts() {
   const [posts, setPosts] = useState([]);

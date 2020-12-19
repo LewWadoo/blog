@@ -5,7 +5,7 @@ import { Alert, Spin } from 'antd';
 
 import './Post.scss';
 import BlogPostHeader from '../blog-post-header';
-import BlogService from '../../services/blogService';
+import BlogService from '../../services/blog-service';
 
 function Post({ match, history }) {
   const slug = match.params.slug;
