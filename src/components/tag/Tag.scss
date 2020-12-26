@@ -1,10 +1,4 @@
-$background-color-base: white;
-$success-color: #52C41A;
-$heading-color: rgba(0, 0, 0, 0.85);
-$text-color: rgba(0, 0, 0, 0.75);
-$info-color: rgba(24, 144, 255, 1);
-$text-color-secondary: rgba(0, 0, 0, 0.5);
-$font-size-sm: 12px;
+@import "../../variables.scss";
 
 .tag {
     font-family: 'Inter';

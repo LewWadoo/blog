@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 
 import './Blog-post-header.scss';
-import User from '../user';
 import Tag from '../tag';
 
 function BlogPostHeader({
@@ -31,7 +30,6 @@ function BlogPostHeader({
         </div>
         <p className="blog-post-content">{description}</p>
       </div>
-      <User {...author} createdAt={createdAt} />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useForm, Controller } from 'react-hook-form';
 import { useState } from 'react';
+import { Redirect } from 'react-router-dom';
 
 import { BlogServiceConsumer } from '../blog-service-context';
 import { SignedInUserConsumer } from '../signed-in-user-context';
@@ -14,14 +15,19 @@ import FormFieldError from '../form-field-error';
 function SignInForm() {
   const { register, handleSubmit, watch, errors, getValues, control } = useForm();
   const [error, setError] = useState(null);
+  // const [isLoggedIn, setLoggedIn] = useState(false);
 
   return (
     <BlogServiceConsumer>
       {({ signIn }) => (
         <SignedInUserConsumer>
-          {({ setUser }) => {
+          {({ user, setUser }) => {
+            if (user) {
+              return <Redirect to="/" />;
+            }
+
             const onSubmit = async (userData) => {
-              let user = {};
+              let userToPath = {};
               try {
                 const result = await signIn({ user: userData });
                 if (result.errors) {
@@ -30,16 +36,16 @@ function SignInForm() {
                   }
                 } else {
                   setError(null);
-                  user = await result.user;
-                  window.localStorage.setItem('user', JSON.stringify(user));
-                  setUser(user);
+                  userToPath = await result.user;
+                  window.localStorage.setItem('user', JSON.stringify(userToPath));
+                  setUser(userToPath);
                 }
                 /* eslint-disable-next-line no-console */
-                console.log('in signIn in onSubmit: user', user);
+                /* console.log('in signIn in onSubmit: userToPath', userToPath); */
               } catch (err) {
                 setError(err.message);
                 /* eslint-disable-next-line no-console */
-                console.log('in signIn in onSubmit: err', err);
+                /* console.log('in signIn in onSubmit: err', err); */
               }
             };
 
@@ -63,6 +69,7 @@ function SignInForm() {
                   <FormFieldError error="This field doesn't look like an email address!" />
                 )}
                 <FormField
+                  type="password"
                   name="password"
                   label="Password"
                   placeholder="Password"

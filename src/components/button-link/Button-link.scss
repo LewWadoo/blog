@@ -1,0 +1,62 @@
+@import "../../variables.scss";
+
+.btn-link-container {
+    margin-left: 10px;
+}
+
+.btn-link {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 0.3em 1em;
+    cursor: pointer;
+/* Regular / 16 px | 24 px */
+
+font-family: Inter;
+font-style: normal;
+font-weight: normal;
+
+&--md {
+font-size: 16px;
+line-height: 24px;
+    height: 40px;
+}
+
+&--sm {
+font-size: 14px;
+line-height: 22px;
+}
+
+    &--highlight {
+    border: 1px solid $highlight-color;
+    background-color: $background-color-base;
+    color: $highlight-color;
+    }
+
+    &--error {
+    border: 1px solid $error-color;
+    background-color: $background-color-base;
+    color: $error-color;
+    }
+
+    &--info {
+    border: 1px solid $info-color;
+    background-color: $background-color-base;
+    color: $info-color;
+    }
+
+    &--success {
+    border: 1px solid $success-color;
+    background-color: $background-color-base;
+    color: $success-color;
+    }
+
+    &--text {
+    border: 1px solid $text-color;
+    background-color: $background-color-base;
+    color: $text-color;
+    }
+
+&--no-border {
+    border: none;
+}
+}

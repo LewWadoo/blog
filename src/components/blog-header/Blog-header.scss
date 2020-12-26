@@ -1,7 +1,4 @@
-$background-color-base: white;
-$success-color: #52C41A;
-$heading-color: rgba(0, 0, 0, 0.85);
-$text-color: rgba(0, 0, 0, 0.75);
+@import "../../variables.scss";
 
 .blog-header {
     margin-bottom: 26px;

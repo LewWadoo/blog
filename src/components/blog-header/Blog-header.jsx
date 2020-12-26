@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './Blog-header.scss';
 import User from '../user';
 import { SignedInUserConsumer } from '../signed-in-user-context';
+import ButtonLink from '../button-link';
 
 function BlogHeader() {
   return (
@@ -18,12 +19,24 @@ function BlogHeader() {
         // console.log('in BlogHeader: user', user);
         const headerLinks = !user ? (
           <div className="user">
-            <Link to="/sign-in" className="link">
-              Sign In
-            </Link>
-            <Link to="/sign-up" className="link link-register">
-              Sign Up
-            </Link>
+            <ButtonLink
+              link="/sign-in"
+              sizeMod="md"
+              classModification="text"
+              className="link"
+              label="Sign In"
+              border={false}
+            />
+            <ButtonLink
+              link="/sign-up"
+              sizeMod="md"
+              classModification="success"
+              className="link"
+              label="Sign Up"
+            />
+            {/* <Link to="/sign-up" className="link link-register"> */}
+            {/*   Sign Up */}
+            {/* </Link> */}
           </div>
         ) : (
           <div className="user">
@@ -33,9 +46,16 @@ function BlogHeader() {
             <Link to="/profile" className="link link-user">
               <User {...user} />
             </Link>
-            <button className="link link-logout" onClick={logOut}>
-              Log Out
-            </button>
+            <ButtonLink
+              sizeMod="md"
+              classModification="text"
+              className="link"
+              label="Log Out"
+              onClick={logOut}
+            />
+            {/* <button className="link link-logout" onClick={logOut}> */}
+
+            {/* </button> */}
           </div>
         );
 

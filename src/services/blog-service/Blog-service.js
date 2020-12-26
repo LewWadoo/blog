@@ -94,14 +94,78 @@ export default class BlogService {
         },
         body: JSON.stringify(user),
       });
-      // eslint-disable-next-line no-console
-      console.log('in updateUser: JSON.stringify(user), token', JSON.stringify(user), token);
 
       if (!result.ok) {
         throw new Error(`Status: ${result.status}`);
       }
 
       return result.json();
+    };
+
+    this.createArticle = async (token, article) => {
+      const createArticleUrl = `articles`;
+      const fullUrl = `${this.baseUrl}${createArticleUrl}`;
+
+      const result = await fetch(`${fullUrl}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(article),
+      });
+
+      if (!result.ok) {
+        throw new Error(`Status: ${result.status}`);
+      }
+
+      return result.json();
+    };
+
+    this.updateArticle = async (token, article, slug) => {
+      const updateArticleUrl = `articles/${slug}`;
+      const fullUrl = `${this.baseUrl}${updateArticleUrl}`;
+
+      const request = {
+        method: 'PUT',
+        headers: {
+          Authorization: `Token ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(article),
+      };
+      /* eslint-disable-next-line no-console */
+      // console.log('in updateArticle: request', request);
+
+      /* eslint-disable-next-line no-debugger */
+      // debugger;
+
+      const result = await fetch(`${fullUrl}`, request);
+
+      if (!result.ok) {
+        throw new Error(`Status: ${result.status}`);
+      }
+
+      return result.json();
+    };
+
+    this.deleteArticle = async (token, slug) => {
+      const deleteArticleUrl = `articles/${slug}`;
+      const fullUrl = `${this.baseUrl}${deleteArticleUrl}`;
+      const request = {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      };
+
+      const result = await fetch(`${fullUrl}`, request);
+
+      if (result.ok) {
+        return true;
+      }
+
+      return false;
     };
   }
 }

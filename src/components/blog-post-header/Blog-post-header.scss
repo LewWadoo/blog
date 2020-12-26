@@ -1,10 +1,4 @@
-$background-color-base: white;
-$success-color: #52C41A;
-$heading-color: rgba(0, 0, 0, 0.85);
-$text-color: rgba(0, 0, 0, 0.75);
-$info-color: rgba(24, 144, 255, 1);
-$font-size-sm: 12px;
-$shadow-color: rgba(0, 0, 0, 0.15);
+@import "../../variables.scss";
 
 .blog-post {
     display: flex;
@@ -56,7 +50,7 @@ $shadow-color: rgba(0, 0, 0, 0.15);
     line-height: 22px;
     font-weight: 400;
     color: $text-color;
-    margin-left: 5px;
+    margin: 0 5px;
 }
 
 .blog-tags {
@@ -79,7 +73,8 @@ $shadow-color: rgba(0, 0, 0, 0.15);
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    width: 682/941 * 100%;
+    // width: 682/941 * 100%;
+flex: 1 1 auto;
 }
 
 .btn-heart {
@@ -92,3 +87,8 @@ $shadow-color: rgba(0, 0, 0, 0.15);
     height: 16px;
     cursor: pointer;
 }
+
+// .user-box {
+//     display: flex;
+//     flex-direction: column;    
+// }

@@ -1,7 +1,4 @@
-$background-color-base: white;
-$background: #E5E5E5;
-$heading-color: rgba(0, 0, 0, 0.85);
-$shadow-color: rgba(0, 0, 0, 0.15);
+@import "../../variables.scss";
 
 .app {
     background-color: $background;
@@ -24,5 +21,4 @@ a {
     justify-content: flex-start;
     align-items: center;
     width: 80%;
-
 }

@@ -1,7 +1,6 @@
 @import "../../variables.scss";
 
 .label {
-width: 100%;
     /* Regular / 14px | 22px */
 
     font-family: Roboto;
@@ -15,7 +14,16 @@ width: 100%;
     flex-direction: column;
     align-items: stretch;
 
+    /* Grey / grey-9 */
+
     color: $grey-9;
+
+    /* Inside Auto Layout */
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    margin: 12px 2px 0;
 }
 
 .field {
@@ -44,12 +52,17 @@ width: 100%;
     border-radius: 4px;
 
     padding: 8px 12px;
-}
 
-.field--correct {
+    &-textarea {
+	resize: none;
+	height: 168px;
+    }
+
+    &--correct {
     border: 1px solid $grey-5;
+    }
+    &--wrong {
+    border: 1px solid $highlight-color;
 }
 
-.field--wrong {
-    border: 1px solid $highlight-color;
 }

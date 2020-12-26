@@ -47,11 +47,11 @@ function SignUpForm() {
                   setUser(user);
                 }
                 /* eslint-disable-next-line no-console */
-                console.log('in signUp in onSubmit: user', user);
+                /* console.log('in signUp in onSubmit: user', user); */
               } catch (err) {
                 setError(err.message);
                 /* eslint-disable-next-line no-console */
-                console.log('in signUp in onSubmit: err', err);
+                /* console.log('in signUp in onSubmit: err', err); */
               }
             };
 
@@ -99,6 +99,7 @@ function SignUpForm() {
                   <FormFieldError error="This field doesn't look like an email address!" />
                 )}
                 <FormField
+                  type="password"
                   label="Password"
                   placeholder="Password"
                   register={register({
@@ -123,6 +124,7 @@ function SignUpForm() {
                   />
                 )}
                 <FormField
+                  type="password"
                   label="Repeat Password"
                   placeholder="Password"
                   register={register({

@@ -11,6 +11,8 @@ import SignUpForm from '../sign-up-form';
 import SignInForm from '../sign-in-form';
 import BlogService from '../../services/blog-service';
 import Profile from '../profile';
+import NewArticleForm from '../new-article-form';
+import PrivateRoute from '../private-route';
 
 import { BlogServiceProvider } from '../blog-service-context';
 import { SignedInUserProvider } from '../signed-in-user-context';
@@ -47,9 +49,22 @@ function App() {
             <Switch>
               <Route path="/sign-up" component={SignUpForm} />
               <Route path="/sign-in" component={SignInForm} />
+              <PrivateRoute
+                path="/articles/:slug/edit"
+                component={NewArticleForm}
+                redirect="/sign-in"
+                condition={user}
+              />
               <Route path="/articles/:slug" component={Post} />
               <Route path="/articles" exact component={BlogPosts} />
-              <Route path="/profile" exact component={Profile} />
+              <PrivateRoute path="/profile" exact={true} component={Profile} redirect="/sign-in" />
+              <PrivateRoute
+                path="/new-article"
+                exact
+                component={NewArticleForm}
+                redirect="/sign-in"
+                condition={user}
+              />
               <Route path="/" exact component={BlogPosts} />
             </Switch>
           </BrowserRouter>

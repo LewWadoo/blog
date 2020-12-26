@@ -1,19 +1,25 @@
 import { Alert, Spin, Pagination } from 'antd';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 
 import './Blog-posts.scss';
 import BlogPostHeader from '../blog-post-header';
-import BlogService from '../../services/blog-service';
+// import BlogService from '../../services/blog-service';
+import { BlogServiceConsumer } from '../blog-service-context';
+
+import User from '../user';
 
 function BlogPosts() {
+  const blogServiceContext = useContext(BlogServiceConsumer);
+
   const [posts, setPosts] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [postsCount, setPostsCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  const blogService = new BlogService();
-  const { fetchArticlesList } = blogService;
+  // const blogService = new BlogService();
+
+  const { fetchArticlesList } = blogServiceContext;
   const pageSize = 20;
 
   const getPosts = useCallback((page, size) => {
@@ -47,9 +53,16 @@ function BlogPosts() {
   const postsData =
     posts !== [] && !spin
       ? posts.map((article, index) => {
+          const { author, createdAt } = article;
           return (
             <li key={article.slug} className="post-container">
-              <BlogPostHeader {...article} />
+              <div className="header">
+                <div className="article">
+                  <BlogPostHeader {...article} />
+                </div>
+                {/* <div className="user-box"> */}
+                <User {...author} createdAt={createdAt} />
+              </div>
             </li>
           );
         })
