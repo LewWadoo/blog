@@ -39,7 +39,6 @@ export default class BlogService {
 
       if (!result.ok) {
         return result.json();
-        // throw new Error(`Status: ${result.status}`);
       }
 
       return result.json();
