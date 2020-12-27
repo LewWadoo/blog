@@ -1,8 +1,6 @@
 import './Form-field-textarea.scss';
 
 function FormFieldTextarea({ label, placeholder, register, name, defaultValue, error }) {
-  /* eslint-disable-next-line no-console */
-  console.log('in FormFieldTextarea: defaultValue', defaultValue);
   return (
     <label className="label">
       {label}
