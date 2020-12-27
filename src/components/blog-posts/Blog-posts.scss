@@ -6,11 +6,7 @@
     justify-content: space-around;
     align-items: stretch;
     grid-gap: 26px;
-    min-width: $post-min-width;
-}
-
-.pagination {
-
+    width: 100%;
 }
 
 li {
@@ -25,7 +21,7 @@ ul {
 .header {
     display: flex;
     flex-direction: row;
-align-items: flex-start;
+    align-items: flex-start;
 }
 
 .post-container {

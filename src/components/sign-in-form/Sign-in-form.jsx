@@ -1,9 +1,9 @@
-import { useForm, Controller } from 'react-hook-form';
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useState, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import { BlogServiceConsumer } from '../blog-service-context';
-import { SignedInUserConsumer } from '../signed-in-user-context';
+import { BlogServiceContext } from '../blog-service-context';
+import { SignedInUserContext } from '../signed-in-user-context';
 
 import './Sign-in-form.scss';
 import FormHeader from '../form-header';
@@ -13,85 +13,75 @@ import RedirectNote from '../redirect-note';
 import FormFieldError from '../form-field-error';
 
 function SignInForm() {
-  const { register, handleSubmit, watch, errors, getValues, control } = useForm();
+  const blogServiceContext = useContext(BlogServiceContext);
+  const { signIn } = blogServiceContext;
+  const { register, handleSubmit, errors } = useForm();
   const [error, setError] = useState(null);
-  // const [isLoggedIn, setLoggedIn] = useState(false);
 
   return (
-    <BlogServiceConsumer>
-      {({ signIn }) => (
-        <SignedInUserConsumer>
-          {({ user, setUser }) => {
-            if (user) {
-              return <Redirect to="/" />;
-            }
+    <SignedInUserContext.Consumer>
+      {({ user, setUser }) => {
+        if (user) {
+          return <Redirect to="/" />;
+        }
 
-            const onSubmit = async (userData) => {
-              let userToPath = {};
-              try {
-                const result = await signIn({ user: userData });
-                if (result.errors) {
-                  if (result.errors['email or password']) {
-                    setError(`email or password ${result.errors['email or password']}`);
-                  }
-                } else {
-                  setError(null);
-                  userToPath = await result.user;
-                  window.localStorage.setItem('user', JSON.stringify(userToPath));
-                  setUser(userToPath);
-                }
-                /* eslint-disable-next-line no-console */
-                /* console.log('in signIn in onSubmit: userToPath', userToPath); */
-              } catch (err) {
-                setError(err.message);
-                /* eslint-disable-next-line no-console */
-                /* console.log('in signIn in onSubmit: err', err); */
+        const onSubmit = async (userData) => {
+          let userToPath = {};
+          try {
+            const result = await signIn({ user: userData });
+            if (result.errors) {
+              if (result.errors['email or password']) {
+                setError(`email or password ${result.errors['email or password']}`);
               }
-            };
+            } else {
+              setError(null);
+              userToPath = await result.user;
+              window.localStorage.setItem('user', JSON.stringify(userToPath));
+              setUser(userToPath);
+            }
+          } catch (err) {
+            setError(err.message);
+          }
+        };
 
-            return (
-              <form className="form" onSubmit={handleSubmit(onSubmit)}>
-                <FormHeader name="Sign In" />
-                <FormField
-                  name="email"
-                  label="Email address"
-                  placeholder="Email address"
-                  register={register({
-                    required: true,
-                    pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-                  })}
-                  error={errors.email}
-                />
-                {errors.email && errors.email.type === 'required' && (
-                  <FormFieldError error="This field is required!" />
-                )}
-                {errors.email && errors.email.type === 'pattern' && (
-                  <FormFieldError error="This field doesn't look like an email address!" />
-                )}
-                <FormField
-                  type="password"
-                  name="password"
-                  label="Password"
-                  placeholder="Password"
-                  register={register({ required: true })}
-                  error={errors.password}
-                />
-                {errors.password && errors.password.type === 'required' && (
-                  <FormFieldError error="This field is required!" />
-                )}
-                <ButtonSubmit label="Login" className="btn-submit" />
-                <RedirectNote
-                  note="Don’t have an account? "
-                  linkText="Sign Up"
-                  linkReference="/sign-up"
-                />
-                {error && <FormFieldError error={error} />}
-              </form>
-            );
-          }}
-        </SignedInUserConsumer>
-      )}
-    </BlogServiceConsumer>
+        return (
+          <form className="form" onSubmit={handleSubmit(onSubmit)}>
+            <FormHeader name="Sign In" />
+            <FormField
+              name="email"
+              type="email"
+              label="Email address"
+              placeholder="Email address"
+              register={register({
+                required: true,
+              })}
+              error={errors.email}
+            />
+            {errors.email && errors.email.type === 'required' && (
+              <FormFieldError error="This field is required!" />
+            )}
+            <FormField
+              type="password"
+              name="password"
+              label="Password"
+              placeholder="Password"
+              register={register({ required: true })}
+              error={errors.password}
+            />
+            {errors.password && errors.password.type === 'required' && (
+              <FormFieldError error="This field is required!" />
+            )}
+            <ButtonSubmit label="Login" className="btn-submit" />
+            <RedirectNote
+              note="Don’t have an account? "
+              linkText="Sign Up"
+              linkReference="/sign-up"
+            />
+            {error && <FormFieldError error={error} />}
+          </form>
+        );
+      }}
+    </SignedInUserContext.Consumer>
   );
 }
 

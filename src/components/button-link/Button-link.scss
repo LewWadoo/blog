@@ -5,58 +5,89 @@
 }
 
 .btn-link {
+    background-color: $background-color-base;
     display: inline-block;
     border-radius: 4px;
     padding: 0.3em 1em;
     cursor: pointer;
-/* Regular / 16 px | 24 px */
 
-font-family: Inter;
-font-style: normal;
-font-weight: normal;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    outline: none;
 
-&--md {
-font-size: 16px;
-line-height: 24px;
-    height: 40px;
-}
+    &--md {
+	font-size: 16px;
+	line-height: 24px;
+	height: 40px;
+    }
 
-&--sm {
-font-size: 14px;
-line-height: 22px;
-}
+    &--sm {
+	font-size: 14px;
+	line-height: 22px;
+    }
 
     &--highlight {
-    border: 1px solid $highlight-color;
-    background-color: $background-color-base;
-    color: $highlight-color;
+	border: 1px solid $highlight-color;
+	color: $highlight-color;
+	&:focus, &:hover {
+	    color: $background-color-base;
+	    background-color: $highlight-color;
+	    border: 1px solid $highlight-color;
+	}
     }
 
     &--error {
-    border: 1px solid $error-color;
-    background-color: $background-color-base;
-    color: $error-color;
+	border: 1px solid $error-color;
+	color: $error-color;
+	&:focus, &:hover {
+	    color: $background-color-base;
+	    background-color: $error-color;
+	    border: 1px solid $error-color;
+	}
     }
 
     &--info {
-    border: 1px solid $info-color;
-    background-color: $background-color-base;
-    color: $info-color;
+	border: 1px solid $info-color;
+	color: $info-color;
+	&:focus, &:hover {
+	    color: $background-color-base;
+	    background-color: $info-color;
+	    border: 1px solid $info-color;
+	}
     }
 
     &--success {
-    border: 1px solid $success-color;
-    background-color: $background-color-base;
-    color: $success-color;
+	border: 1px solid $success-color;
+	color: $success-color;
+	&:focus, &:hover {
+	    color: $background-color-base;
+	    background-color: $success-color;
+	    border: 1px solid $success-color;
+	}
     }
 
     &--text {
-    border: 1px solid $text-color;
-    background-color: $background-color-base;
-    color: $text-color;
+	border: 1px solid $text-color;
+	color: $text-color;
+	&:focus, &:hover {
+	    color: $background-color-base;
+	    background-color: $text-color;
+	    border: 1px solid $text-color;
+	}
     }
 
-&--no-border {
-    border: none;
-}
+    &--heading {
+	border: 1px solid $heading-color;
+	color: $heading-color;
+	&:focus, &:hover {
+	    color: $background-color-base;
+	    background-color: $heading-color;
+	    border: 1px solid $heading-color;
+	}
+    }
+
+    &--no-border {
+	border: none;
+    }
 }

@@ -1,24 +1,31 @@
 @import "../../variables.scss";
 
 .btn-submit {
-    background-color: $day-break-blue;
+    background-color: $background-color-base;
     border-radius: 4px;
     border: none;
     padding: 8px 16px;
 
-    /* Regular / 16 px | 24 px */
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
 
-font-family: Roboto;
-font-style: normal;
-font-weight: normal;
-font-size: 16px;
-line-height: 24px;
-/* identical to box height, or 150% */
-
-/* Grey / grey-1 */
-
-color: $background-color-base;
-margin-bottom: 8px;
+    margin-bottom: 8px;
     margin-top: 21px;
-cursor: pointer;
+    cursor: pointer;
+    color: $day-break-blue;
+    border: 1px solid $day-break-blue;
+    outline: none;
+
+    &--sm {
+	width: 35%;
+    }
+
+    &:focus, &:hover, &--sm:focus, &--sm:hover {
+	color: $background-color-base;
+	background-color: $day-break-blue;
+	border: 1px solid $day-break-blue;
+    }
 }

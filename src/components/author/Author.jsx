@@ -1,9 +1,9 @@
 import './Author.scss';
 import { format } from 'date-fns';
 
-function Author({ image, authorname, createdAt }) {
-  // eslint-disable-next-line no-console
-  // console.log('in Author: image, authorname', image, authorname);
+function Author({ author, createdAt }) {
+  const { username, image } = author;
+
   const formattedDate = (date) => {
     try {
       const dateObject = new Date(createdAt);
@@ -16,10 +16,10 @@ function Author({ image, authorname, createdAt }) {
   return (
     <div className="author">
       <div className="info">
-        <div className="name">{authorname}</div>
+        <div className="name">{username}</div>
         <div className="date">{formattedDate(createdAt)}</div>
       </div>
-      <img alt="authorpic" src={image} className="picture"></img>
+      <img alt="author" src={image} className="picture"></img>
     </div>
   );
 }

@@ -1,0 +1,26 @@
+@import "../../variables.scss";
+
+.btn-heart {
+    background-image: url('./heart-empty.svg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+    background-color: $background-color-base;
+    border: none;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+
+    &:disabled {
+	cursor: not-allowed;
+    }
+
+    &:focus {
+	outline: none;
+    }
+
+    &--favorited {
+	background-image: url('./heart-full.svg');
+
+    }
+}

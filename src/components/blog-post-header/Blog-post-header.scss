@@ -1,23 +1,19 @@
 @import "../../variables.scss";
 
-.blog-post {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-    align-self: center;
-    margin-bottom: 26px;
-}
+// .blog-post {
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: flex-start;
+//     align-items: stretch;
+//     align-self: center;
+//     margin-bottom: 26px;
+// }
 
 .blog-post-header {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: flex-start;
-//     background-color: $background-color-base;
-//     border-radius: 5px;
-// filter: drop-shadow(0px 4px 12px $shadow-color);
-//     padding: 14px;
 }
 
 .blog-post-title {
@@ -39,13 +35,13 @@
 }
 
 .blog-likes {
-        display: flex;
+    display: flex;
     flex-direction: row;
     align-items: center;
 }
 
 .likes-count {
-   font-family: 'Inter';
+    font-family: 'Inter';
     font-size: $font-size-sm;
     line-height: 22px;
     font-weight: 400;
@@ -73,22 +69,5 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    // width: 682/941 * 100%;
-flex: 1 1 auto;
+    flex: 1 1 auto;
 }
-
-.btn-heart {
-    background-image: url('../../images/heart empty.svg');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: contain;
-    border: none;
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-// .user-box {
-//     display: flex;
-//     flex-direction: column;    
-// }

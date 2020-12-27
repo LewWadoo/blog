@@ -14,8 +14,8 @@ import Profile from '../profile';
 import NewArticleForm from '../new-article-form';
 import PrivateRoute from '../private-route';
 
-import { BlogServiceProvider } from '../blog-service-context';
-import { SignedInUserProvider } from '../signed-in-user-context';
+import { BlogServiceContext } from '../blog-service-context';
+import { SignedInUserContext } from '../signed-in-user-context';
 
 const blogService = new BlogService();
 
@@ -23,7 +23,6 @@ function App() {
   const [user, setUser] = useState('');
 
   useEffect(() => {
-    // const UserContext = createContext(user);
     const userData = window.localStorage.getItem('user') ? window.localStorage.getItem('user') : '';
     if (userData === '') {
       return;
@@ -41,8 +40,8 @@ function App() {
   }, []);
 
   return (
-    <BlogServiceProvider value={blogService}>
-      <SignedInUserProvider value={{ user, setUser }}>
+    <BlogServiceContext.Provider value={blogService}>
+      <SignedInUserContext.Provider value={{ user, setUser }}>
         <div className="app">
           <BrowserRouter>
             <BlogHeader />
@@ -57,7 +56,13 @@ function App() {
               />
               <Route path="/articles/:slug" component={Post} />
               <Route path="/articles" exact component={BlogPosts} />
-              <PrivateRoute path="/profile" exact={true} component={Profile} redirect="/sign-in" />
+              <PrivateRoute
+                path="/profile"
+                exact={true}
+                component={Profile}
+                redirect="/sign-in"
+                condition={user}
+              />
               <PrivateRoute
                 path="/new-article"
                 exact
@@ -69,8 +74,8 @@ function App() {
             </Switch>
           </BrowserRouter>
         </div>
-      </SignedInUserProvider>
-    </BlogServiceProvider>
+      </SignedInUserContext.Provider>
+    </BlogServiceContext.Provider>
   );
 }
 

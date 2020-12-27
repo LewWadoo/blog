@@ -5,14 +5,14 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
     margin: 0;
     padding-bottom: 78px;
+    align-items: center;
 }
 
 a {
     text-decoration: none;
-        color: $heading-color;
+    color: $heading-color;
 }
 
 .main {
@@ -20,5 +20,5 @@ a {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    width: 80%;
+    width: 100%;
 }

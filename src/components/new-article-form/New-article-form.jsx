@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Redirect } from 'react-router-dom';
 
-import { BlogServiceConsumer } from '../blog-service-context';
-import { SignedInUserConsumer } from '../signed-in-user-context';
+import { BlogServiceContext } from '../blog-service-context';
+import { SignedInUserContext } from '../signed-in-user-context';
 
 import './New-article-form.scss';
 import FormHeader from '../form-header';
@@ -15,9 +15,10 @@ import NewTagForm from '../new-tag-form';
 
 function NewArticleForm({ match }) {
   const slug = match ? match.params.slug : null;
-  const blogServiceConsumer = useContext(BlogServiceConsumer);
+  const blogServiceContext = useContext(BlogServiceContext);
+  const { createArticle, updateArticle, fetchArticle } = blogServiceContext;
 
-  const { register, handleSubmit, watch, errors, getValues, control } = useForm();
+  const { register, handleSubmit, errors } = useForm();
   const [error, setError] = useState(null);
   const [tags, setTags] = useState([]);
 
@@ -48,7 +49,7 @@ function NewArticleForm({ match }) {
     setTags([...tags.slice(0, index), tag, ...tags.slice(index + 1)]);
   };
 
-  const newTagForm = (id, needLabel) => {
+  const newTagForm = (id, needLabel, needAddTag) => {
     return (
       <NewTagForm
         onAdd={addTagForm}
@@ -59,6 +60,7 @@ function NewArticleForm({ match }) {
         tag={getTag(id)}
         setTag={setTag}
         key={id}
+        needAddTag={needAddTag}
       />
     );
   };
@@ -69,9 +71,6 @@ function NewArticleForm({ match }) {
 
   useEffect(() => {
     window.id = 0;
-    // eslint-disable-next-line no-console
-    // console.log('in NewArticleForm: slug', slug);
-    const { fetchArticle } = blogServiceConsumer;
     if (slug) {
       fetchArticle(slug)
         .then((result) => {
@@ -87,129 +86,113 @@ function NewArticleForm({ match }) {
           setError(error.message);
         });
     }
-  }, []);
+  }, [slug, fetchArticle]);
 
   if (isSubmitted) {
     return <Redirect to="/" />;
   } else {
     return (
-      <BlogServiceConsumer>
-        {({ createArticle, updateArticle }) => (
-          <SignedInUserConsumer>
-            {({ user }) => {
-              const create = async (articleData) => {
-                const { token } = user;
-                let article = {};
-                /* eslint-disable-next-line no-console */
-                /* console.log('in onSubmit: articleData', articleData); */
-                try {
-                  const result = await createArticle(token, {
-                    article: { ...articleData, tagList: tags },
-                  });
-                  if (result.errors) {
-                    setError(`${result.errors}`);
-                  } else {
-                    setError(null);
-                    article = await result.article;
-                  }
-                } catch (err) {
-                  setError(err.message);
-                  /*   /\* eslint-disable-next-line no-console *\/ */
-                  console.log('in createArticle in onSubmit: err', err);
-                  return false;
-                }
+      <SignedInUserContext.Consumer>
+        {({ user }) => {
+          const create = async (articleData) => {
+            const { token } = user;
+            try {
+              const result = await createArticle(token, {
+                article: { ...articleData, tagList: tags },
+              });
+              if (result.errors) {
+                setError(`${result.errors}`);
+              } else {
+                setError(null);
+              }
+            } catch (err) {
+              setError(err.message);
+              return false;
+            }
 
-                return true;
-              };
+            return true;
+          };
 
-              const update = async (articleData) => {
-                const { token } = user;
-                /* let article = {}; */
-                /* eslint-disable-next-line no-console */
-                /* console.log('in onSubmit: articleData', articleData); */
-                try {
-                  const result = await updateArticle(token, { article: { ...articleData } }, slug);
-                  if (result.errors) {
-                    setError(`${result.errors}`);
-                  } else {
-                    setError(null);
-                    /* article = await result.article; */
-                  }
-                } catch (err) {
-                  setError(err.message);
-                  /*   /\* eslint-disable-next-line no-console *\/ */
-                  /* console.log('in updateArticle in onSubmit: err', err); */
-                  return false;
-                }
+          const update = async (articleData) => {
+            const { token } = user;
+            try {
+              const result = await updateArticle(token, { article: { ...articleData } }, slug);
+              if (result.errors) {
+                setError(`${result.errors}`);
+              } else {
+                setError(null);
+              }
+            } catch (err) {
+              setError(err.message);
+              return false;
+            }
 
-                return true;
-              };
+            return true;
+          };
 
-              const onSubmit = async (articleData) => {
-                /* eslint-disable-next-line no-debugger */
-                /* debugger; */
-                let result;
-                if (slug) {
-                  result = await update(articleData);
-                } else {
-                  result = await create(articleData);
-                }
+          const onSubmit = async (articleData) => {
+            let result;
+            if (slug) {
+              result = await update(articleData);
+            } else {
+              result = await create(articleData);
+            }
 
-                if (result) {
-                  setSubmitted(true);
-                }
-              };
+            setSubmitted(result);
+          };
 
-              const { title, description, body } = post;
+          const { title, description, body } = post;
 
-              return (
-                <form className="form" onSubmit={handleSubmit(onSubmit)}>
-                  <FormHeader name={slug ? 'Edit article' : 'Create new article'} />
-                  <FormField
-                    label="Title"
-                    placeholder="Title"
-                    register={register({
-                      required: true,
-                    })}
-                    name="title"
-                    error={errors.title}
-                    defaultValue={title}
-                  />
-                  {errors.title && errors.title.type === 'required' && (
-                    <FormFieldError error="This field is required!" />
-                  )}
-                  <FormField
-                    label="Short description"
-                    placeholder="Short description"
-                    register={register({
-                      required: true,
-                    })}
-                    name="description"
-                    error={errors.description}
-                    defaultValue={description}
-                  />
-                  <FormFieldTextarea
-                    label="Text"
-                    placeholder="Text"
-                    register={register({
-                      required: true,
-                    })}
-                    name="body"
-                    error={errors.body}
-                    defaultValue={body}
-                  />
-                  {errors.body && errors.body.type === 'required' && (
-                    <FormFieldError error="This field is required!" />
-                  )}
-                  <ul>{tagIds.map((id, index) => newTagForm(id, index === 0))}</ul>
-                  <ButtonSubmit label="Send" />
-                  {error && <FormFieldError error={error} />}
-                </form>
-              );
-            }}
-          </SignedInUserConsumer>
-        )}
-      </BlogServiceConsumer>
+          return (
+            <form className="form" onSubmit={handleSubmit(onSubmit)}>
+              <FormHeader name={slug ? 'Edit article' : 'Create new article'} />
+              <FormField
+                label="Title"
+                placeholder="Title"
+                register={register({
+                  required: true,
+                })}
+                name="title"
+                error={errors.title}
+                defaultValue={title}
+              />
+              {errors.title && errors.title.type === 'required' && (
+                <FormFieldError error="This field is required!" />
+              )}
+              <FormField
+                label="Short description"
+                placeholder="Short description"
+                register={register({
+                  required: true,
+                })}
+                name="description"
+                error={errors.description}
+                defaultValue={description}
+              />
+              <FormFieldTextarea
+                label="Text"
+                placeholder="Text"
+                register={register({
+                  required: true,
+                })}
+                name="body"
+                error={errors.body}
+                defaultValue={body}
+              />
+              {errors.body && errors.body.type === 'required' && (
+                <FormFieldError error="This field is required!" />
+              )}
+              <ul>
+                {tagIds.map((id, index, tags) =>
+                  newTagForm(id, index === 0, index === tags.length - 1),
+                )}
+              </ul>
+              <ButtonSubmit label="Send" classMod="sm" />
+              {error && <FormFieldError error={error} />}
+            </form>
+          );
+        }}
+      </SignedInUserContext.Consumer>
     );
   }
 }

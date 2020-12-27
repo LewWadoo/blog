@@ -3,13 +3,13 @@ import React, { useState, useEffect, useCallback, useContext } from 'react';
 
 import './Blog-posts.scss';
 import BlogPostHeader from '../blog-post-header';
-// import BlogService from '../../services/blog-service';
-import { BlogServiceConsumer } from '../blog-service-context';
+import { BlogServiceContext } from '../blog-service-context';
 
-import User from '../user';
+import Author from '../author';
 
 function BlogPosts() {
-  const blogServiceContext = useContext(BlogServiceConsumer);
+  const blogServiceContext = useContext(BlogServiceContext);
+  const { fetchArticlesList } = blogServiceContext;
 
   const [posts, setPosts] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
@@ -17,34 +17,33 @@ function BlogPosts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  // const blogService = new BlogService();
+  const PAGE_SIZE = 5;
 
-  const { fetchArticlesList } = blogServiceContext;
-  const pageSize = 20;
-
-  const getPosts = useCallback((page, size) => {
-    fetchArticlesList(page, size)
-      .then((result) => {
-        setPosts(result.articles);
-        setIsLoading(false);
-        setPostsCount(result.articlesCount);
-        return result;
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        setErrorMessage(error.message);
-      });
-  }, []);
+  const getPosts = useCallback(
+    (page, size) => {
+      fetchArticlesList(page, size)
+        .then((result) => {
+          setPosts(result.articles);
+          setIsLoading(false);
+          setPostsCount(result.articlesCount);
+          return result;
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          setErrorMessage(error.message);
+        });
+    },
+    [fetchArticlesList],
+  );
 
   useEffect(() => {
-    getPosts(currentPage, pageSize);
+    getPosts(currentPage, PAGE_SIZE);
     setIsLoading(true);
-    // }, [currentPage, pageSize, getPosts]);
-  }, [currentPage, pageSize]);
+  }, [currentPage, PAGE_SIZE, getPosts]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    getPosts(currentPage, pageSize);
+    getPosts(page, PAGE_SIZE);
   };
 
   const alert = errorMessage ? <Alert message={errorMessage} type="error" /> : null;
@@ -60,8 +59,7 @@ function BlogPosts() {
                 <div className="article">
                   <BlogPostHeader {...article} />
                 </div>
-                {/* <div className="user-box"> */}
-                <User {...author} createdAt={createdAt} />
+                <Author author={author} createdAt={createdAt} />
               </div>
             </li>
           );
@@ -76,9 +74,8 @@ function BlogPosts() {
         {postsData}
       </ul>
       <Pagination
-        className="pagination"
         current={currentPage}
-        pageSize={pageSize}
+        pageSize={PAGE_SIZE}
         responsive
         onChange={handlePageChange}
         total={postsCount}

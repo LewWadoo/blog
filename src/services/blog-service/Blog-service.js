@@ -59,7 +59,6 @@ export default class BlogService {
 
       if (!result.ok) {
         return result.json();
-        // throw new Error(`Status: ${result.status}`);
       }
 
       return result.json();
@@ -134,11 +133,6 @@ export default class BlogService {
         },
         body: JSON.stringify(article),
       };
-      /* eslint-disable-next-line no-console */
-      // console.log('in updateArticle: request', request);
-
-      /* eslint-disable-next-line no-debugger */
-      // debugger;
 
       const result = await fetch(`${fullUrl}`, request);
 
@@ -159,6 +153,42 @@ export default class BlogService {
         },
       };
 
+      const result = await fetch(`${fullUrl}`, request);
+
+      if (result.ok) {
+        return true;
+      }
+
+      return false;
+    };
+
+    this.favoriteArticle = async (token, slug) => {
+      const favoriteArticleUrl = `articles/${slug}/favorite`;
+      const fullUrl = `${this.baseUrl}${favoriteArticleUrl}`;
+      const request = {
+        method: 'POST',
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      };
+      const result = await fetch(`${fullUrl}`, request);
+
+      if (result.ok) {
+        return true;
+      }
+
+      return false;
+    };
+
+    this.unfavoriteArticle = async (token, slug) => {
+      const favoriteArticleUrl = `articles/${slug}/favorite`;
+      const fullUrl = `${this.baseUrl}${favoriteArticleUrl}`;
+      const request = {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      };
       const result = await fetch(`${fullUrl}`, request);
 
       if (result.ok) {
