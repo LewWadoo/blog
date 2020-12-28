@@ -1,0 +1,1 @@
+export const REQUEST_SEARCH_ID = 'REQUEST_SEARCH_ID';
