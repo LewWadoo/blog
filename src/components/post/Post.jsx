@@ -1,10 +1,11 @@
 import { withRouter } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Alert, Spin } from 'antd';
-
-import { BlogServiceContext } from '../blog-service-context';
-import { SignedInUserContext } from '../signed-in-user-context';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { fetchArticle, deleteArticle } from '../../actions/articles';
+import { CLEAR_REDIRECT, CLEAR_MESSAGE, CLEAR_ARTICLE } from '../../actions/action-types.js';
+import { Redirect } from 'react-router-dom';
 
 import './Post.scss';
 import BlogPostHeader from '../blog-post-header';
@@ -13,37 +14,29 @@ import Author from '../author';
 import PopConfirm from '../pop-confirm';
 
 function Post({ match, history }) {
-  const blogServiceContext = useContext(BlogServiceContext);
-  const { fetchArticle, deleteArticle } = blogServiceContext;
-  const signedInUserContext = useContext(SignedInUserContext);
-  const { user } = signedInUserContext;
+  const slug = match ? match.params.slug : null;
 
-  const [slug, setSlug] = useState(match.params.slug);
+  const article = useSelector((state) => state.article);
+  const loading = useSelector((state) => state.loading);
+  const message = useSelector((state) => state.message, shallowEqual);
+  const auth = useSelector((state) => state.auth);
+  const redirect = useSelector((state) => state.redirect);
 
-  const [post, setPost] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const dispatch = useDispatch();
 
   const getPost = useCallback(
     (slug) => {
-      fetchArticle(slug)
-        .then((result) => {
-          setPost(result.article);
-          setIsLoading(false);
-          return result;
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          setErrorMessage(error.message);
-        });
+      dispatch(fetchArticle(slug));
     },
-    [fetchArticle],
+    [dispatch],
   );
 
   useEffect(() => {
+    dispatch({ type: CLEAR_REDIRECT });
+    dispatch({ type: CLEAR_MESSAGE });
+    dispatch({ type: CLEAR_ARTICLE });
     getPost(slug);
-    setIsLoading(true);
-  }, [slug, getPost]);
+  }, [slug, getPost, dispatch]);
 
   const [showPopConfirm, setShowPopConfirm] = useState(false);
 
@@ -52,35 +45,33 @@ function Post({ match, history }) {
   };
 
   const acceptDelete = () => {
-    setShowPopConfirm(false);
+    const { user } = auth;
     const { token } = user;
-    const isDeleted = deleteArticle(token, slug);
-    if (isDeleted) {
-      setSlug('');
-    }
+    setShowPopConfirm(false);
+    dispatch(deleteArticle(token, slug));
   };
 
-  const alert = errorMessage ? <Alert message={errorMessage} type="error" /> : null;
-  const spin = isLoading ? <Spin /> : null;
+  const spin = loading ? <Spin /> : null;
   const popConfirm = showPopConfirm ? (
     <PopConfirm onAccept={acceptDelete} onReject={rejectDelete} />
   ) : null;
 
-  let postData = null;
-  let postBody = null;
+  let articleData = null;
+  let articleBody = null;
   let authorData = null;
   let controlButtons = null;
-  if (post && post.author && !spin && errorMessage === '') {
-    const { author, createdAt } = post;
-    postData = <BlogPostHeader {...post} />;
-    postBody = <ReactMarkdown className="post-body">{post.body}</ReactMarkdown>;
+  if (article && article.author && article.body && !loading && message === '') {
+    const { author, createdAt } = article;
+    articleData = <BlogPostHeader {...article} />;
+
+    articleBody = <ReactMarkdown className="post-body">{article.body}</ReactMarkdown>;
     authorData = <Author author={author} createdAt={createdAt} />;
     if (
-      post.author &&
-      post.author.username &&
-      user &&
-      user.username &&
-      user.username === post.author.username
+      article.author.username &&
+      auth &&
+      auth.user &&
+      auth.user.username &&
+      auth.user.username === article.author.username
     ) {
       controlButtons = (
         <div className="control-buttons">
@@ -102,20 +93,24 @@ function Post({ match, history }) {
     }
   }
 
+  if (redirect) {
+    return <Redirect to="/" />;
+  }
+
   return (
     <div className="post-container">
       <div className="header">
         <div className="article">
-          {alert}
+          {message && <Alert message={message} type="error" />}
           {spin}
-          {postData}
+          {articleData}
         </div>
         <div className="user-buttons">
           {authorData}
           {controlButtons}
         </div>
       </div>
-      {postBody}
+      {articleBody}
     </div>
   );
 }

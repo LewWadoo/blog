@@ -1,9 +1,8 @@
 import { useForm } from 'react-hook-form';
-import { useState, useContext } from 'react';
+import { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
-
-import { BlogServiceContext } from '../blog-service-context';
-import { SignedInUserContext } from '../signed-in-user-context';
+import { useDispatch, useSelector, connect } from 'react-redux';
+import { Alert } from 'antd';
 
 import './Sign-in-form.scss';
 import FormHeader from '../form-header';
@@ -11,78 +10,81 @@ import FormField from '../form-field';
 import ButtonSubmit from '../button-submit';
 import RedirectNote from '../redirect-note';
 import FormFieldError from '../form-field-error';
+import * as actions from '../../actions/auth';
+import { getAuth } from '../../reducers';
+import { CLEAR_REDIRECT, CLEAR_MESSAGE, CLEAR_ERRORS } from '../../actions/action-types.js';
 
 function SignInForm() {
-  const blogServiceContext = useContext(BlogServiceContext);
-  const { signIn } = blogServiceContext;
   const { register, handleSubmit, errors } = useForm();
-  const [error, setError] = useState(null);
+
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const error = useSelector((state) => state.errors);
+  const message = useSelector((state) => state.message);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({ type: CLEAR_REDIRECT });
+    dispatch({ type: CLEAR_MESSAGE });
+    dispatch({ type: CLEAR_ERRORS });
+  }, [dispatch]);
+
+  if (isLoggedIn) {
+    return <Redirect to="/" />;
+  }
+
+  const onSubmit = async (userData) => {
+    const { email, password } = userData;
+    dispatch(actions.signIn(email, password));
+  };
 
   return (
-    <SignedInUserContext.Consumer>
-      {({ user, setUser }) => {
-        if (user) {
-          return <Redirect to="/" />;
-        }
-
-        const onSubmit = async (userData) => {
-          let userToPath = {};
-          try {
-            const result = await signIn({ user: userData });
-            if (result.errors) {
-              if (result.errors['email or password']) {
-                setError(`email or password ${result.errors['email or password']}`);
-              }
-            } else {
-              setError(null);
-              userToPath = await result.user;
-              window.localStorage.setItem('user', JSON.stringify(userToPath));
-              setUser(userToPath);
-            }
-          } catch (err) {
-            setError(err.message);
-          }
-        };
-
-        return (
-          <form className="form" onSubmit={handleSubmit(onSubmit)}>
-            <FormHeader name="Sign In" />
-            <FormField
-              name="email"
-              type="email"
-              label="Email address"
-              placeholder="Email address"
-              register={register({
-                required: true,
-              })}
-              error={errors.email}
-            />
-            {errors.email && errors.email.type === 'required' && (
-              <FormFieldError error="This field is required!" />
-            )}
-            <FormField
-              type="password"
-              name="password"
-              label="Password"
-              placeholder="Password"
-              register={register({ required: true })}
-              error={errors.password}
-            />
-            {errors.password && errors.password.type === 'required' && (
-              <FormFieldError error="This field is required!" />
-            )}
-            <ButtonSubmit label="Login" className="btn-submit" />
-            <RedirectNote
-              note="Don’t have an account? "
-              linkText="Sign Up"
-              linkReference="/sign-up"
-            />
-            {error && <FormFieldError error={error} />}
-          </form>
-        );
-      }}
-    </SignedInUserContext.Consumer>
+    <form className="form" onSubmit={handleSubmit(onSubmit)}>
+      <FormHeader name="Sign In" />
+      <FormField
+        name="email"
+        type="email"
+        label="Email address"
+        placeholder="Email address"
+        register={register({
+          required: true,
+        })}
+        error={errors.email || error['email or password']}
+      />
+      {errors.email && errors.email.type === 'required' && (
+        <FormFieldError error="This field is required!" />
+      )}
+      {error && error['email or password'] && (
+        <FormFieldError error={`email or password ${error['email or password']}`} />
+      )}
+      <FormField
+        type="password"
+        name="password"
+        label="Password"
+        placeholder="Password"
+        register={register({ required: true })}
+        error={errors.password || error['email or password']}
+      />
+      {errors.password && errors.password.type === 'required' && (
+        <FormFieldError error="This field is required!" />
+      )}
+      {error && error['email or password'] && (
+        <FormFieldError error={`email or password ${error['email or password']}`} />
+      )}
+      <ButtonSubmit label="Login" className="btn-submit" />
+      <RedirectNote note="Don’t have an account? " linkText="Sign Up" linkReference="/sign-up" />
+      {error['email or password'] && (
+        <FormFieldError error={`email or password ${error['email or password']}`} />
+      )}
+      {message ? <Alert message={message} type="error" /> : null}
+    </form>
   );
 }
 
-export default SignInForm;
+const mapStateToProps = (state) => {
+  return {
+    auth: getAuth(state),
+  };
+};
+
+export default connect(mapStateToProps, actions)(SignInForm);

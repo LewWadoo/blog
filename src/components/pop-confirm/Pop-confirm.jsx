@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import './Pop-confirm.scss';
 import attention from './attention.png';
 import arrow from './arrow.svg';

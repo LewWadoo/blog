@@ -1,18 +1,12 @@
 @import "../../variables.scss";
 
 .redirect-note {
-    /* Regular / 12px | 20 px */
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
 
-font-family: Roboto;
-font-style: normal;
-font-weight: normal;
-font-size: 12px;
-line-height: 20px;
-/* identical to box height, or 167% */
-
-text-align: center;
-
-/* Grey / grey-7 */
-
-color: $grey-7;
+    color: $grey-7;
 }

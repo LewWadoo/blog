@@ -1,9 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Redirect } from 'react-router-dom';
-
-import { BlogServiceContext } from '../blog-service-context';
-import { SignedInUserContext } from '../signed-in-user-context';
+import { useDispatch, useSelector } from 'react-redux';
 
 import './New-article-form.scss';
 import FormHeader from '../form-header';
@@ -12,19 +10,30 @@ import ButtonSubmit from '../button-submit';
 import FormFieldError from '../form-field-error';
 import FormFieldTextarea from '../form-field-textarea';
 import NewTagForm from '../new-tag-form';
+import { fetchArticle, createArticle, updateArticle } from '../../actions/articles';
+import { CLEAR_REDIRECT, CLEAR_MESSAGE, CLEAR_ARTICLE } from '../../actions/action-types.js';
 
 function NewArticleForm({ match }) {
   const slug = match ? match.params.slug : null;
-  const blogServiceContext = useContext(BlogServiceContext);
-  const { createArticle, updateArticle, fetchArticle } = blogServiceContext;
+  let isEnoughEmptyTags = false;
+  let noMoreNewTagForms = false;
 
   const { register, handleSubmit, errors } = useForm();
-  const [error, setError] = useState(null);
-  const [tags, setTags] = useState([]);
+  const message = useSelector((state) => state.message);
+  const article = useSelector((state) => state.article);
+  const auth = useSelector((state) => state.auth);
+  const redirect = useSelector((state) => state.redirect);
+  const [tags, setTags] = useState(article ? article.tagList : ['']);
+  const [tagIds, setTagIds] = useState(
+    tags && tags.length > 0 ? tags.map((tag, index) => index) : [0],
+  );
+
+  const dispatch = useDispatch();
 
   const addTagForm = () => {
     window.id += 1;
-    setTagIds([...tagIds, window.id + 1]);
+    setTagIds([...tagIds, window.id]);
+    setTags([...tags.slice(0, tags.length), '']);
   };
 
   const findIndexById = (id) => {
@@ -34,8 +43,14 @@ function NewArticleForm({ match }) {
   const onDelete = (id) => {
     const index = findIndexById(id);
     if (index === -1) return;
-    setTagIds([...tagIds.slice(0, index), ...tagIds.slice(index + 1)]);
-    setTags([...tags.slice(0, index), ...tags.slice(index + 1)]);
+
+    if (tagIds.length === 1) {
+      setTags(['']);
+      setTagIds([0]);
+    } else {
+      setTagIds([...tagIds.slice(0, index), ...tagIds.slice(index + 1)]);
+      setTags([...tags.slice(0, index), ...tags.slice(index + 1)]);
+    }
   };
 
   const getTag = (id) => {
@@ -49,152 +64,124 @@ function NewArticleForm({ match }) {
     setTags([...tags.slice(0, index), tag, ...tags.slice(index + 1)]);
   };
 
-  const newTagForm = (id, needLabel, needAddTag) => {
+  const newTagForm = (id, index) => {
     return (
       <NewTagForm
         onAdd={addTagForm}
         onDelete={onDelete}
         register={register}
         tagId={id}
-        needLabel={needLabel}
+        needLabel={index === 0}
         tag={getTag(id)}
         setTag={setTag}
         key={id}
-        needAddTag={needAddTag}
+        needAddTag={index === tags.length - 1}
       />
     );
   };
 
-  const [tagIds, setTagIds] = useState([1]);
-  const [isSubmitted, setSubmitted] = useState(false);
-  const [post, setPost] = useState({});
-
   useEffect(() => {
+    dispatch({ type: CLEAR_REDIRECT });
+    dispatch({ type: CLEAR_MESSAGE });
+    dispatch({ type: CLEAR_ARTICLE });
     window.id = 0;
     if (slug) {
-      fetchArticle(slug)
-        .then((result) => {
-          setPost(result.article);
-          const { tagList } = result.article;
-          if (tagList) {
-            setTags(tagList);
-            setTagIds(tagList.map((tag, index) => index));
-          }
-          return result;
-        })
-        .catch((error) => {
-          setError(error.message);
-        });
+      dispatch(fetchArticle(slug)).then((result) => {
+        setTags(result.article.tagList);
+        setTagIds(
+          result.article.tagList.length > 0
+            ? result.article.tagList.map((tag, index) => index)
+            : [0],
+        );
+      });
     }
-  }, [slug, fetchArticle]);
+  }, [slug, dispatch]);
 
-  if (isSubmitted) {
+  if (redirect) {
     return <Redirect to="/" />;
-  } else {
-    return (
-      <SignedInUserContext.Consumer>
-        {({ user }) => {
-          const create = async (articleData) => {
-            const { token } = user;
-            try {
-              const result = await createArticle(token, {
-                article: { ...articleData, tagList: tags },
-              });
-              if (result.errors) {
-                setError(`${result.errors}`);
-              } else {
-                setError(null);
-              }
-            } catch (err) {
-              setError(err.message);
-              return false;
-            }
-
-            return true;
-          };
-
-          const update = async (articleData) => {
-            const { token } = user;
-            try {
-              const result = await updateArticle(token, { article: { ...articleData } }, slug);
-              if (result.errors) {
-                setError(`${result.errors}`);
-              } else {
-                setError(null);
-              }
-            } catch (err) {
-              setError(err.message);
-              return false;
-            }
-
-            return true;
-          };
-
-          const onSubmit = async (articleData) => {
-            let result;
-            if (slug) {
-              result = await update(articleData);
-            } else {
-              result = await create(articleData);
-            }
-
-            setSubmitted(result);
-          };
-
-          const { title, description, body } = post;
-
-          return (
-            <form className="form" onSubmit={handleSubmit(onSubmit)}>
-              <FormHeader name={slug ? 'Edit article' : 'Create new article'} />
-              <FormField
-                label="Title"
-                placeholder="Title"
-                register={register({
-                  required: true,
-                })}
-                name="title"
-                error={errors.title}
-                defaultValue={title}
-              />
-              {errors.title && errors.title.type === 'required' && (
-                <FormFieldError error="This field is required!" />
-              )}
-              <FormField
-                label="Short description"
-                placeholder="Short description"
-                register={register({
-                  required: true,
-                })}
-                name="description"
-                error={errors.description}
-                defaultValue={description}
-              />
-              <FormFieldTextarea
-                label="Text"
-                placeholder="Text"
-                register={register({
-                  required: true,
-                })}
-                name="body"
-                error={errors.body}
-                defaultValue={body}
-              />
-              {errors.body && errors.body.type === 'required' && (
-                <FormFieldError error="This field is required!" />
-              )}
-              <ul>
-                {tagIds.map((id, index, tags) =>
-                  newTagForm(id, index === 0, index === tags.length - 1),
-                )}
-              </ul>
-              <ButtonSubmit label="Send" classMod="sm" />
-              {error && <FormFieldError error={error} />}
-            </form>
-          );
-        }}
-      </SignedInUserContext.Consumer>
-    );
   }
+  const create = async (articleData) => {
+    const { title, description, body } = articleData;
+    const { token } = auth.user;
+    dispatch(createArticle(token, title, description, body, tags));
+  };
+
+  const update = async (articleData) => {
+    const { title, description, body } = articleData;
+    const { token } = auth.user;
+    dispatch(updateArticle(token, title, description, body, tags, slug));
+  };
+
+  const onSubmit = async (articleData) => {
+    if (slug) {
+      update(articleData);
+    } else {
+      create(articleData);
+    }
+  };
+
+  return (
+    <form className="form" onSubmit={handleSubmit(onSubmit)}>
+      <FormHeader name={slug ? 'Edit article' : 'Create new article'} />
+      <FormField
+        label="Title"
+        placeholder="Title"
+        register={register({
+          required: true,
+        })}
+        name="title"
+        error={errors.title}
+        defaultValue={article ? article.title : ''}
+      />
+      {errors.title && errors.title.type === 'required' && (
+        <FormFieldError error="This field is required!" />
+      )}
+      <FormField
+        label="Short description"
+        placeholder="Short description"
+        register={register({
+          required: true,
+        })}
+        name="description"
+        error={errors.description}
+        defaultValue={article ? article.description : ''}
+      />
+      <FormFieldTextarea
+        label="Text"
+        placeholder="Text"
+        register={register({
+          required: true,
+        })}
+        name="body"
+        error={errors.body}
+        defaultValue={article ? article.body : ''}
+      />
+      {errors.body && errors.body.type === 'required' && (
+        <FormFieldError error="This field is required!" />
+      )}
+      <ul>
+        {tagIds.map((id, index) => {
+          if (noMoreNewTagForms) {
+            return null;
+          } else {
+            if (!isEnoughEmptyTags && tags[index] === '') {
+              isEnoughEmptyTags = true;
+            } else {
+              if (isEnoughEmptyTags && tags[index] === '') {
+                onDelete(id);
+                noMoreNewTagForms = true;
+
+                return null;
+              }
+            }
+          }
+          return newTagForm(id, index);
+        })}
+      </ul>
+      <ButtonSubmit label="Send" classMod="sm" />
+      {message && <FormFieldError error={message} />}
+    </form>
+  );
 }
 
 export default NewArticleForm;

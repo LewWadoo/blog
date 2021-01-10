@@ -1,19 +1,13 @@
 @import "../../variables.scss";
 
 .form-field-error {
-/* Regular / 14px | 22px */
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 22px;
 
-font-family: Roboto;
-font-style: normal;
-font-weight: normal;
-font-size: 14px;
-line-height: 22px;
-/* identical to box height, or 157% */
+    color: $highlight-color;
 
-
-/* @highlight-color */
-
-color: $highlight-color;
-
-margin: 0;
+    margin: 0;
 }

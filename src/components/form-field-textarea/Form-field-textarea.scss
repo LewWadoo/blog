@@ -1,24 +1,17 @@
 @import "../../variables.scss";
 
 .label {
-    /* Regular / 14px | 22px */
-
     font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
     line-height: 22px;
-    /* identical to box height, or 157% */
 
     display: flex;
     flex-direction: column;
     align-items: stretch;
 
-    /* Grey / grey-9 */
-
     color: $grey-9;
-
-    /* Inside Auto Layout */
 
     flex: none;
     order: 0;
@@ -27,27 +20,15 @@
 }
 
 .field {
-    /* Regular / 16 px | 24 px */
-
     font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     font-size: 16px;
     line-height: 24px;
-    /* identical to box height, or 150% */
-
-    // display: flex;
-    // align-items: center;
-
-    /* Grey / grey-6 */
 
     color: $text-color;
 
-    /* Grey / grey-1 */
-
     background: $background-color-base;
-    /* Grey / grey-5 */
-
     box-sizing: border-box;
     border-radius: 4px;
 
@@ -59,10 +40,10 @@
     }
 
     &--correct {
-    border: 1px solid $grey-5;
+	border: 1px solid $grey-5;
     }
     &--wrong {
-    border: 1px solid $highlight-color;
-}
+	border: 1px solid $highlight-color;
+    }
 
 }

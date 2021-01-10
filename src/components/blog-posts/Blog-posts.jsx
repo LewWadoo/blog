@@ -1,57 +1,54 @@
 import { Alert, Spin, Pagination } from 'antd';
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector, connect } from 'react-redux';
 
 import './Blog-posts.scss';
 import BlogPostHeader from '../blog-post-header';
-import { BlogServiceContext } from '../blog-service-context';
+import { getArticles, getLoading } from '../../reducers';
+import * as actions from '../../actions/articles';
+import {
+  CLEAR_REDIRECT,
+  CLEAR_ARTICLE,
+  CLEAR_MESSAGE,
+  CLEAR_ERRORS,
+} from '../../actions/action-types.js';
 
 import Author from '../author';
 
-function BlogPosts() {
-  const blogServiceContext = useContext(BlogServiceContext);
-  const { fetchArticlesList } = blogServiceContext;
-
-  const [posts, setPosts] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [postsCount, setPostsCount] = useState(0);
+const BlogPosts = ({ articles, loading }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const PAGE_SIZE = 5;
+  const message = useSelector((state) => state.message);
+  const dispatch = useDispatch();
 
-  const getPosts = useCallback(
+  const PAGE_SIZE = 20;
+
+  const getArticles = useCallback(
     (page, size) => {
-      fetchArticlesList(page, size)
-        .then((result) => {
-          setPosts(result.articles);
-          setIsLoading(false);
-          setPostsCount(result.articlesCount);
-          return result;
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          setErrorMessage(error.message);
-        });
+      dispatch(actions.fetchArticlesList(page, size));
     },
-    [fetchArticlesList],
+    [dispatch],
   );
 
   useEffect(() => {
-    getPosts(currentPage, PAGE_SIZE);
-    setIsLoading(true);
-  }, [currentPage, PAGE_SIZE, getPosts]);
+    dispatch({ type: CLEAR_MESSAGE });
+    dispatch({ type: CLEAR_ERRORS });
+    dispatch({ type: CLEAR_REDIRECT });
+    dispatch({ type: CLEAR_ARTICLE });
+    getArticles(currentPage, PAGE_SIZE);
+  }, [currentPage, PAGE_SIZE, getArticles, dispatch]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    getPosts(page, PAGE_SIZE);
+    getArticles(page, PAGE_SIZE);
   };
 
-  const alert = errorMessage ? <Alert message={errorMessage} type="error" /> : null;
-  const spin = isLoading ? <Spin /> : null;
+  const alert = message ? <Alert message={message} type="error" /> : null;
+  const spin = loading ? <Spin /> : null;
 
-  const postsData =
-    posts !== [] && !spin
-      ? posts.map((article, index) => {
+  const articlesData =
+    articles && articles.articles && articles.articles !== [] && !spin
+      ? articles.articles.map((article, index) => {
           const { author, createdAt } = article;
           return (
             <li key={article.slug} className="post-container">
@@ -71,18 +68,25 @@ function BlogPosts() {
       <ul className="blog-posts">
         {alert}
         {spin}
-        {postsData}
+        {articlesData}
       </ul>
       <Pagination
         current={currentPage}
         pageSize={PAGE_SIZE}
         responsive
         onChange={handlePageChange}
-        total={postsCount}
+        total={articles.articlesCount}
         showSizeChanger={false}
       />
     </div>
   );
-}
+};
 
-export default BlogPosts;
+const mapStateToProps = (state) => {
+  return {
+    articles: getArticles(state),
+    loading: getLoading(state),
+  };
+};
+
+export default connect(mapStateToProps, actions)(BlogPosts);

@@ -1,28 +1,21 @@
 @import "../../variables.scss";
 
 .form-header-container {
-/* Inside Auto Layout */
-
-flex: none;
-order: 0;
-align-self: center;
-flex-grow: 0;
-margin: 0px 21px;
+    flex: none;
+    order: 0;
+    align-self: center;
+    flex-grow: 0;
+    margin: 0px 21px;
 }
 
 .form-header {
-/* Semibold / 20 px | 28 px */
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
 
-font-family: Roboto;
-font-style: normal;
-font-weight: 500;
-font-size: 20px;
-line-height: 28px;
-/* identical to box height, or 140% */
+    text-align: center;
 
-text-align: center;
-
-/* Grey / grey-9 */
-
-color: #262626;
+    color: $grey-9;
 }    

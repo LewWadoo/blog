@@ -1,21 +1,21 @@
 import { Link } from 'react-router-dom';
-import { useContext } from 'react';
+import { useDispatch, useSelector, connect } from 'react-redux';
 
 import './Blog-header.scss';
 import User from '../user';
-import { SignedInUserContext } from '../signed-in-user-context';
 import ButtonLink from '../button-link';
+import * as actions from '../../actions/auth';
+import { getAuth } from '../../reducers';
 
-function BlogHeader() {
-  const signedInUserContext = useContext(SignedInUserContext);
-  const { user, setUser } = signedInUserContext;
+function BlogHeader({ auth }) {
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const logOut = () => {
-    window.localStorage.setItem('user', '');
-    setUser('');
+    dispatch(actions.logout());
   };
 
-  const headerLinks = !user ? (
+  const headerLinks = !isLoggedIn ? (
     <div className="user">
       <ButtonLink
         link="/sign-in"
@@ -42,7 +42,7 @@ function BlogHeader() {
         sizeMod="sm"
       />
       <Link to="/profile" className="link">
-        <User {...user} />
+        <User {...auth.user} />
       </Link>
       <ButtonLink sizeMod="md" classModification="text" label="Log Out" onClick={logOut} />
     </div>
@@ -62,4 +62,10 @@ function BlogHeader() {
   );
 }
 
-export default BlogHeader;
+const mapStateToProps = (state) => {
+  return {
+    auth: getAuth(state),
+  };
+};
+
+export default connect(mapStateToProps, actions)(BlogHeader);
