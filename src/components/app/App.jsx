@@ -16,7 +16,7 @@ import PrivateRoute from '../private-route';
 import { authorize } from '../../actions/auth';
 
 function App() {
-  const { user } = useSelector((state) => state.auth);
+  const { user, isLoggedIn } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -43,7 +43,7 @@ function App() {
             path="/articles/:slug/edit"
             component={NewArticleForm}
             redirect="/sign-in"
-            condition={user}
+            condition={isLoggedIn}
           />
           <Route path="/articles/:slug" component={Post} />
           <Route path="/articles" exact component={BlogPosts} />

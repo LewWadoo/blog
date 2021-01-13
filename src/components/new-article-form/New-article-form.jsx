@@ -169,13 +169,13 @@ function NewArticleForm({ match }) {
       )}
       <ul>
         {tagIds.map((id, index) => {
-          if (noMoreNewTagForms) {
+          if (noMoreNewTagForms || typeof tags[index] === 'undefined') {
             return null;
           } else {
-            if (!isEnoughEmptyTags && tags[index] && tags[index].trim() === '') {
+            if (!isEnoughEmptyTags && tags[index].trim() === '') {
               isEnoughEmptyTags = true;
             } else {
-              if (isEnoughEmptyTags && tags[index] && tags[index].trim() === '') {
+              if (isEnoughEmptyTags && tags[index].trim() === '') {
                 onDelete(id);
                 noMoreNewTagForms = true;
 
