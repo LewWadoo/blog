@@ -1,1 +1,1 @@
-https://blog-kwtg2omf5.vercel.app/
+https://blog-612entkq5.vercel.app/
