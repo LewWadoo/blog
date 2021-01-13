@@ -23,7 +23,9 @@ function NewArticleForm({ match }) {
   const article = useSelector((state) => state.article);
   const auth = useSelector((state) => state.auth);
   const redirect = useSelector((state) => state.redirect);
-  const [tags, setTags] = useState(article ? article.tagList : ['']);
+  const doesOwnArticle =
+    article && auth && auth.user && article.author.username === auth.user.username;
+  const [tags, setTags] = useState(article && doesOwnArticle ? article.tagList : ['']);
   const [tagIds, setTagIds] = useState(
     tags && tags.length > 0 ? tags.map((tag, index) => index) : [0],
   );
@@ -59,12 +61,16 @@ function NewArticleForm({ match }) {
   };
 
   const setTag = (id, tag) => {
+    if (tag && tag.trim() === '') {
+      return;
+    }
+
     const index = findIndexById(id);
 
     setTags([...tags.slice(0, index), tag, ...tags.slice(index + 1)]);
   };
 
-  const newTagForm = (id, index) => {
+  const newTagForm = (id, index, isDisabled) => {
     return (
       <NewTagForm
         onAdd={addTagForm}
@@ -76,6 +82,7 @@ function NewArticleForm({ match }) {
         setTag={setTag}
         key={id}
         needAddTag={index === tags.length - 1}
+        isDisabled={isDisabled}
       />
     );
   };
@@ -100,6 +107,7 @@ function NewArticleForm({ match }) {
   if (redirect) {
     return <Redirect to="/" />;
   }
+
   const create = async (articleData) => {
     const { title, description, body } = articleData;
     const { token } = auth.user;
@@ -131,7 +139,7 @@ function NewArticleForm({ match }) {
         })}
         name="title"
         error={errors.title}
-        defaultValue={article ? article.title : ''}
+        defaultValue={article && doesOwnArticle ? article.title : ''}
       />
       {errors.title && errors.title.type === 'required' && (
         <FormFieldError error="This field is required!" />
@@ -144,7 +152,7 @@ function NewArticleForm({ match }) {
         })}
         name="description"
         error={errors.description}
-        defaultValue={article ? article.description : ''}
+        defaultValue={article && doesOwnArticle ? article.description : ''}
       />
       <FormFieldTextarea
         label="Text"
@@ -154,7 +162,7 @@ function NewArticleForm({ match }) {
         })}
         name="body"
         error={errors.body}
-        defaultValue={article ? article.body : ''}
+        defaultValue={article && doesOwnArticle ? article.body : ''}
       />
       {errors.body && errors.body.type === 'required' && (
         <FormFieldError error="This field is required!" />
@@ -164,10 +172,10 @@ function NewArticleForm({ match }) {
           if (noMoreNewTagForms) {
             return null;
           } else {
-            if (!isEnoughEmptyTags && tags[index] === '') {
+            if (!isEnoughEmptyTags && tags[index] && tags[index].trim() === '') {
               isEnoughEmptyTags = true;
             } else {
-              if (isEnoughEmptyTags && tags[index] === '') {
+              if (isEnoughEmptyTags && tags[index] && tags[index].trim() === '') {
                 onDelete(id);
                 noMoreNewTagForms = true;
 
@@ -175,7 +183,7 @@ function NewArticleForm({ match }) {
               }
             }
           }
-          return newTagForm(id, index);
+          return newTagForm(id, index, index < tagIds.length - 1);
         })}
       </ul>
       <ButtonSubmit label="Send" classMod="sm" />

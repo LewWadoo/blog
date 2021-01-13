@@ -18,6 +18,7 @@ function SignUpForm() {
   const message = useSelector((state) => state.message);
   const error = useSelector((state) => state.errors);
   const redirect = useSelector((state) => state.redirect);
+  const { isLoggedIn } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -27,7 +28,7 @@ function SignUpForm() {
     dispatch({ type: CLEAR_ERRORS });
   }, [dispatch]);
 
-  if (redirect) {
+  if (redirect || isLoggedIn) {
     return <Redirect to="/" />;
   }
 
