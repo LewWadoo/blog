@@ -17,8 +17,11 @@ import { authorize } from '../../actions/auth';
 
 function App() {
   const { user, isLoggedIn } = useSelector((state) => state.auth);
+  const article = useSelector((state) => state.article);
 
   const dispatch = useDispatch();
+
+  const doesOwnArticle = article && user && article.author.username === user.username;
 
   useEffect(() => {
     const userData = window.localStorage.getItem('user') ? window.localStorage.getItem('user') : '';
@@ -42,8 +45,8 @@ function App() {
           <PrivateRoute
             path="/articles/:slug/edit"
             component={NewArticleForm}
-            redirect="/sign-in"
-            condition={isLoggedIn}
+            redirect="/new-article"
+            condition={isLoggedIn && doesOwnArticle}
           />
           <Route path="/articles/:slug" component={Post} />
           <Route path="/articles" exact component={BlogPosts} />
