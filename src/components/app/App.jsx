@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import './App.scss';
@@ -15,7 +15,7 @@ import NewArticleForm from '../new-article-form';
 import PrivateRoute from '../private-route';
 import { authorize } from '../../actions/auth';
 
-function App() {
+function App({ match }) {
   const { user, isLoggedIn } = useSelector((state) => state.auth);
   const article = useSelector((state) => state.article);
 
@@ -37,36 +37,35 @@ function App() {
 
   return (
     <div className="app">
-      <BrowserRouter>
-        <BlogHeader />
-        <Switch>
-          <Route path="/sign-up" component={SignUpForm} />
-          <Route path="/sign-in" component={SignInForm} />
-          <PrivateRoute
-            path="/articles/:slug/edit"
-            component={NewArticleForm}
-            redirect="/new-article"
-            condition={isLoggedIn && doesOwnArticle}
-          />
-          <Route path="/articles/:slug" component={Post} />
-          <Route path="/articles" exact component={BlogPosts} />
-          <PrivateRoute
-            path="/profile"
-            exact={true}
-            component={Profile}
-            redirect="/sign-in"
-            condition={user}
-          />
-          <PrivateRoute
-            path="/new-article"
-            exact
-            component={NewArticleForm}
-            redirect="/sign-in"
-            condition={user}
-          />
-          <Route path="/" exact component={BlogPosts} />
-        </Switch>
-      </BrowserRouter>
+      <BlogHeader />
+      <Switch>
+        <Route path="/sign-up" component={SignUpForm} />
+        <Route path="/sign-in" component={SignInForm} />
+        <PrivateRoute
+          path="/articles/:slug/edit"
+          component={NewArticleForm}
+          exact={true}
+          redirect="/"
+          condition={isLoggedIn && doesOwnArticle}
+        />
+        <Route path="/articles/:slug" component={Post} />
+        <Route path="/articles" exact component={BlogPosts} />
+        <PrivateRoute
+          path="/profile"
+          exact={true}
+          component={Profile}
+          redirect="/sign-in"
+          condition={isLoggedIn}
+        />
+        <PrivateRoute
+          path="/new-article"
+          exact={true}
+          component={NewArticleForm}
+          redirect="/sign-in"
+          condition={isLoggedIn}
+        />
+        <Route path="/" exact component={BlogPosts} />
+      </Switch>
     </div>
   );
 }

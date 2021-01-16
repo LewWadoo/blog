@@ -10,11 +10,11 @@ import ButtonSubmit from '../button-submit';
 import FormFieldError from '../form-field-error';
 import FormFieldTextarea from '../form-field-textarea';
 import NewTagForm from '../new-tag-form';
-import { fetchArticle, createArticle, updateArticle } from '../../actions/articles';
-import { CLEAR_REDIRECT, CLEAR_MESSAGE, CLEAR_ARTICLE } from '../../actions/action-types.js';
+import { createArticle, updateArticle } from '../../actions/articles';
+import { CLEAR_REDIRECT, CLEAR_MESSAGE } from '../../actions/action-types.js';
 
 function NewArticleForm({ match }) {
-  const slug = match ? match.params.slug : null;
+  let slug = match ? match.params.slug : null;
   let isEnoughEmptyTags = false;
   let noMoreNewTagForms = false;
 
@@ -90,19 +90,8 @@ function NewArticleForm({ match }) {
   useEffect(() => {
     dispatch({ type: CLEAR_REDIRECT });
     dispatch({ type: CLEAR_MESSAGE });
-    dispatch({ type: CLEAR_ARTICLE });
     window.id = 0;
-    if (slug) {
-      dispatch(fetchArticle(slug)).then((result) => {
-        setTags(result.article.tagList);
-        setTagIds(
-          result.article.tagList.length > 0
-            ? result.article.tagList.map((tag, index) => index)
-            : [0],
-        );
-      });
-    }
-  }, [slug, dispatch]);
+  }, [dispatch]);
 
   if (redirect) {
     return <Redirect to="/" />;
