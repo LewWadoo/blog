@@ -26,7 +26,7 @@ const NewTagForm = ({
         placeholder="Tag"
         name={`tag-${tagId}`}
         label={needLabel ? 'Tags' : ''}
-        defaultValue={tag}
+        /* defaultValue={tag} */
         value={tag}
         onChange={(event) => {
           setTag(tagId, event.target.value);

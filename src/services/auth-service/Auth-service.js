@@ -18,7 +18,6 @@ export default class AuthService {
 
     this.signIn = (email, password) => {
       const fullUrl = `${baseUrl}users/login`;
-      console.log('in signIn: email', email);
       return fetch(`${fullUrl}`, {
         method: 'POST',
         headers: {
@@ -40,13 +39,6 @@ export default class AuthService {
     };
 
     this.updateUser = (token, image, username = '', email = '', password = '') => {
-      console.log(
-        'in AuthService updateUser: image, username, email, password',
-        image,
-        username,
-        email,
-        password,
-      );
       const updatedUser = {};
       updatedUser.image = image;
       if (username) {
@@ -58,7 +50,6 @@ export default class AuthService {
       if (password) {
         updatedUser.password = password;
       }
-      console.log('in AuthService: updatedUser', updatedUser);
 
       return fetch(`${baseUrl}user`, {
         method: 'PUT',

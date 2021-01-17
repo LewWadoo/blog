@@ -1,6 +1,15 @@
 import './Form-field-textarea.scss';
 
-function FormFieldTextarea({ label, placeholder, register, name, defaultValue, error }) {
+function FormFieldTextarea({
+  label,
+  placeholder,
+  register,
+  name,
+  defaultValue,
+  error,
+  value,
+  onChange,
+}) {
   return (
     <label className="label">
       {label}
@@ -11,6 +20,8 @@ function FormFieldTextarea({ label, placeholder, register, name, defaultValue, e
         ref={register}
         name={name}
         defaultValue={defaultValue}
+        value={value}
+        onChange={onChange}
       ></textarea>
     </label>
   );

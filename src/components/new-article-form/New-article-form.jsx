@@ -11,7 +11,8 @@ import FormFieldError from '../form-field-error';
 import FormFieldTextarea from '../form-field-textarea';
 import NewTagForm from '../new-tag-form';
 import { createArticle, updateArticle } from '../../actions/articles';
-import { CLEAR_REDIRECT, CLEAR_MESSAGE } from '../../actions/action-types.js';
+import { NEED_REDIRECT, CLEAR_MESSAGE, CLEAR_ARTICLE } from '../../actions/action-types.js';
+import { Spin } from 'antd';
 
 function NewArticleForm({ match }) {
   let slug = match ? match.params.slug : null;
@@ -23,12 +24,20 @@ function NewArticleForm({ match }) {
   const article = useSelector((state) => state.article);
   const auth = useSelector((state) => state.auth);
   const redirect = useSelector((state) => state.redirect);
-  const doesOwnArticle =
-    article && auth && auth.user && article.author.username === auth.user.username;
+  const loading = useSelector((state) => state.loading);
+
+  const [doesOwnArticle, setOwnArticle] = useState(
+    article && auth && auth.user && article.author.username === auth.user.username,
+  );
   const [tags, setTags] = useState(article && doesOwnArticle ? article.tagList : ['']);
   const [tagIds, setTagIds] = useState(
     tags && tags.length > 0 ? tags.map((tag, index) => index) : [0],
   );
+  const [title, setTitle] = useState(article && doesOwnArticle ? article.title : '');
+  const [description, setDescription] = useState(
+    article && doesOwnArticle ? article.description : '',
+  );
+  const [body, setBody] = useState(article && doesOwnArticle ? article.body : '');
 
   const dispatch = useDispatch();
 
@@ -88,10 +97,30 @@ function NewArticleForm({ match }) {
   };
 
   useEffect(() => {
-    dispatch({ type: CLEAR_REDIRECT });
     dispatch({ type: CLEAR_MESSAGE });
     window.id = 0;
-  }, [dispatch]);
+    if (!slug) {
+      setTitle('');
+      setDescription('');
+      setBody('');
+      setTags(['']);
+      setTagIds([0]);
+      if (article) {
+        dispatch({ type: CLEAR_ARTICLE });
+      }
+    } else if (article) {
+      if (auth && auth.user && article.author.username === auth.user.username) {
+        setTags(article.tagList);
+        setTagIds(article.tagList.map((tag, index) => index));
+        setTitle(article.title);
+        setDescription(article.description);
+        setBody(article.body);
+      } else {
+        dispatch({ type: NEED_REDIRECT });
+      }
+    }
+    setOwnArticle(article && auth && auth.user && article.author.username === auth.user.username);
+  }, [dispatch, article, auth, slug, loading]);
 
   if (redirect) {
     return <Redirect to="/" />;
@@ -117,6 +146,23 @@ function NewArticleForm({ match }) {
     }
   };
 
+  const onTitleChange = (event) => {
+    setTitle(event.target.value);
+  };
+
+  const onDescriptionChange = (event) => {
+    setDescription(event.target.value);
+  };
+
+  const onBodyChange = (event) => {
+    setBody(event.target.value);
+  };
+
+  const spin = loading ? <Spin /> : null;
+  if (loading) {
+    return spin;
+  }
+
   return (
     <form className="form" onSubmit={handleSubmit(onSubmit)}>
       <FormHeader name={slug ? 'Edit article' : 'Create new article'} />
@@ -128,7 +174,8 @@ function NewArticleForm({ match }) {
         })}
         name="title"
         error={errors.title}
-        defaultValue={article && doesOwnArticle ? article.title : ''}
+        value={title}
+        onChange={onTitleChange}
       />
       {errors.title && errors.title.type === 'required' && (
         <FormFieldError error="This field is required!" />
@@ -141,7 +188,8 @@ function NewArticleForm({ match }) {
         })}
         name="description"
         error={errors.description}
-        defaultValue={article && doesOwnArticle ? article.description : ''}
+        value={description}
+        onChange={onDescriptionChange}
       />
       <FormFieldTextarea
         label="Text"
@@ -151,7 +199,8 @@ function NewArticleForm({ match }) {
         })}
         name="body"
         error={errors.body}
-        defaultValue={article && doesOwnArticle ? article.body : ''}
+        value={body}
+        onChange={onBodyChange}
       />
       {errors.body && errors.body.type === 'required' && (
         <FormFieldError error="This field is required!" />

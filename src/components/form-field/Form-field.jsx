@@ -10,6 +10,7 @@ function FormField({
   onChange,
   type = 'text',
   isDisabled,
+  value,
 }) {
   return (
     <label className="label">
@@ -23,6 +24,7 @@ function FormField({
         name={name}
         defaultValue={defaultValue}
         disabled={isDisabled}
+        value={value}
       />
     </label>
   );

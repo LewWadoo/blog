@@ -16,12 +16,9 @@ import PrivateRoute from '../private-route';
 import { authorize } from '../../actions/auth';
 
 function App({ match }) {
-  const { user, isLoggedIn } = useSelector((state) => state.auth);
-  const article = useSelector((state) => state.article);
+  const { isLoggedIn } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-
-  const doesOwnArticle = article && user && article.author.username === user.username;
 
   useEffect(() => {
     const userData = window.localStorage.getItem('user') ? window.localStorage.getItem('user') : '';
@@ -41,13 +38,6 @@ function App({ match }) {
       <Switch>
         <Route path="/sign-up" component={SignUpForm} />
         <Route path="/sign-in" component={SignInForm} />
-        <PrivateRoute
-          path="/articles/:slug/edit"
-          component={NewArticleForm}
-          exact={true}
-          redirect="/"
-          condition={isLoggedIn && doesOwnArticle}
-        />
         <Route path="/articles/:slug" component={Post} />
         <Route path="/articles" exact component={BlogPosts} />
         <PrivateRoute
