@@ -1,1 +1,1 @@
-https://blog-iodp13tv3.vercel.app
+https://blog-74a35ymw4.vercel.app/
